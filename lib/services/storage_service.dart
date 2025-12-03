@@ -54,7 +54,7 @@ class StorageService {
     final String? jsonString = prefs.getString('habit_entries');
     
     print('📥 StorageService: Loading from storage...');
-    print('📥 StorageService: Retrieved string = ${jsonString?.substring(0, jsonString != null && jsonString.length > 100 ? 100 : jsonString?.length ?? 0)}...');
+    print('📥 StorageService: Retrieved string = ${jsonString?.substring(0, jsonString.length > 100 ? 100 : jsonString.length ?? 0)}...');
     
     if (jsonString == null || jsonString.isEmpty) {
       print('📥 StorageService: No data found, returning empty list');

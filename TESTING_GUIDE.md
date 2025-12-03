@@ -138,7 +138,7 @@ All UI components have been successfully converted to use the comprehensive Resp
 - [ ] All menu items are visible
 - [ ] Habit names don't overflow
 - [ ] Add button works
-- [ ] Bold "Dishant Pawar" text displays
+- [ ] Bold "DP THE SILENT KILLER" text displays
 
 ### Top Bar
 - [ ] View switching works

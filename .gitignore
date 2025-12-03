@@ -18,6 +18,47 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# Visual Studio & Visual Studio Code Cache
+.vscode/
+.vs/
+*.user
+*.suo
+*.cache
+*.tmp
+
+# Build outputs / binaries
+*.apk
+*.aab
+*.ipa
+*.exe
+*.dll
+*.dmg
+*.app
+
+# Gradle & Dart tool cache
+.gradle/
+.gradle-cache/
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+
+# Temporary files
+*.log
+*.bak
+*.old
+*.orig
+*.tmp
+
+# Flutter build outputs
+build/
+android/app/build/
+web/.dart_tool/
+linux/build/
+macos/Build/
+windows/build/
+
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.

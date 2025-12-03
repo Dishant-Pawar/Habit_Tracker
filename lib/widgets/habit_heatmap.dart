@@ -136,7 +136,7 @@ class _HabitHeatmapState extends State<HabitHeatmap> {
                   fontWeight: FontWeight.bold,
                   color: (entry?.dailyPercentage ?? 0) > 50
                       ? Colors.white
-                      : Colors.black87,
+                      : const Color.fromARGB(221, 0, 0, 0),
                 ),
               ),
             ),

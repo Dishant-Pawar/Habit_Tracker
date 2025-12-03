@@ -133,7 +133,7 @@ class HabitDataService {
     return monthGroups.entries.map((e) {
       double avg = e.value.map((entry) => entry.dailyPercentage).reduce((a, b) => a + b) / e.value.length;
       int filled = (avg / 10).round();
-      String progressBar = '⬛' * filled + '⬜' * (10 - filled) + ' ${avg.round()}%';
+      String progressBar = '${'⬛' * filled}${'⬜' * (10 - filled)} ${avg.round()}%';
       
       return MonthlyOverview(
         name: e.key,

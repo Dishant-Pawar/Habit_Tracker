@@ -6,6 +6,7 @@ import '../widgets/stats_card.dart';
 import '../widgets/habit_list_card.dart';
 import '../widgets/monthly_chart.dart';
 import '../widgets/habit_heatmap.dart';
+import '../main.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -71,6 +72,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.upload_file),
             onPressed: _loadCSVData,
             tooltip: 'Load CSV Data',
+          ),
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              HabitTrackerApp.of(context)?.toggleTheme();
+            },
+            tooltip: 'Toggle Dark Mode',
           ),
         ],
       ),
@@ -139,29 +151,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Motivational Quote
-          Card(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    '🌟 Dishant Pawar',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
+          Column(
+            children: [
+              Text(
+                '🌟 DP THE SILENT KILLER',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xFF00FF41),
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: const Color(0xFF00FF41).withOpacity(0.8),
+                          blurRadius: 10,
                         ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Keep building your habits, one day at a time!',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ],
                     ),
-                  ),
-                ],
               ),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                'Keep building your habits, one day at a time!',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 

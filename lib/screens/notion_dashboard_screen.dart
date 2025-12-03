@@ -5,6 +5,7 @@ import '../models/habit_entry.dart';
 import '../services/habit_data_service.dart';
 import '../services/storage_service.dart';
 import '../utils/responsive_helper.dart';
+import '../main.dart';
 
 class NotionDashboardScreen extends StatefulWidget {
   const NotionDashboardScreen({super.key});
@@ -20,6 +21,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   DateTime _selectedMonth = DateTime.now();
   bool _isSidebarOpen = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final ScrollController _horizontalScrollController = ScrollController();
   // This is the sidebar screen this is used for the sidebar menu
   List<String> habitNames = [
     'Sleep 7-8 hours 💤',
@@ -38,6 +40,12 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   void initState() {
     super.initState();
     _loadFromStorage();
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadFromStorage() async {
@@ -78,7 +86,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
         
         return Scaffold(
           key: _scaffoldKey,
-          backgroundColor: const Color(0xFFF7F6F3),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           drawer: responsive.isSmall ? Drawer(
             child: _buildSidebar(responsive),
           ) : null,
@@ -117,32 +125,33 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   Widget _buildSidebar(ResponsiveHelper responsive) {
     return Container(
       width: responsive.sidebarWidth,
-      color: const Color(0xFFFBFAF8),
+      color: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF1A1A1A)
+          : const Color(0xFFFBFAF8),
       padding: responsive.padding(const EdgeInsets.all(24)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Habit tracker',
+            'HABIT TRACKER',
             style: TextStyle(
               fontSize: responsive.fontSize(24),
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: responsive.spacing(32)),
-          Container(
-            padding: responsive.padding(const EdgeInsets.all(12)),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0EDE5),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              'Dishant Pawar',
-              style: TextStyle(
-                fontSize: responsive.fontSize(14),
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
-              ),
+          Text(
+            'DP THE SILENT KILLER',
+            style: TextStyle(
+              fontSize: responsive.fontSize(14),
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF00FF41),
+              shadows: [
+                Shadow(
+                  color: const Color(0xFF00FF41).withOpacity(0.8),
+                  blurRadius: 10,
+                ),
+              ],
             ),
           ),
           SizedBox(height: responsive.spacing(24)),
@@ -154,6 +163,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                   style: TextStyle(
                     fontSize: responsive.fontSize(16),
                     fontWeight: FontWeight.w600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF64B5F6)
+                        : null,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -173,43 +185,194 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
             child: ListView.builder(
               itemCount: habitNames.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    left: responsive.spacing(24),
-                    bottom: responsive.spacing(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '• ${habitNames[index]}',
-                          style: TextStyle(fontSize: responsive.fontSize(14)),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                return TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: Duration(milliseconds: 300 + (index * 50)),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Transform.translate(
+                      offset: Offset(-50 * (1 - value), 0),
+                      child: Opacity(
+                        opacity: value,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: responsive.spacing(24),
+                      bottom: responsive.spacing(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '• ${habitNames[index]}',
+                            style: TextStyle(
+                              fontSize: responsive.fontSize(14),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF64B5F6)
+                                  : null,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: responsive.spacing(4)),
-                      IconButton(
-                        icon: Icon(Icons.edit, size: responsive.smallIconSize),
-                        onPressed: () => _editHabit(index),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'Edit',
-                      ),
-                      SizedBox(width: responsive.spacing(4)),
-                      IconButton(
-                        icon: Icon(Icons.delete, size: responsive.smallIconSize),
-                        onPressed: () => _deleteHabit(index),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'Delete',
-                      ),
-                    ],
+                        SizedBox(width: responsive.spacing(4)),
+                        IconButton(
+                          icon: Icon(Icons.edit, size: responsive.smallIconSize),
+                          onPressed: () => _editHabit(index),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          tooltip: 'Edit',
+                        ),
+                        SizedBox(width: responsive.spacing(4)),
+                        IconButton(
+                          icon: Icon(Icons.delete, size: responsive.smallIconSize),
+                          onPressed: () => _deleteHabit(index),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          tooltip: 'Delete',
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
+          SizedBox(height: responsive.spacing(24)),
+          _buildSidebarMonthlyChart(responsive),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSidebarMonthlyChart(ResponsiveHelper responsive) {
+    // Get current month's data
+    final now = DateTime.now();
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    
+    // Calculate monthly statistics
+    Map<String, int> monthlyHabitStats = {};
+    int totalDaysInMonth = lastDayOfMonth.day;
+    
+    for (int i = 0; i < habitNames.length && i < 10; i++) {
+      int completed = 0;
+      for (int day = 1; day <= totalDaysInMonth; day++) {
+        final date = DateTime(now.year, now.month, day);
+        final entry = _entries.firstWhere(
+          (e) => e.date.year == date.year && e.date.month == date.month && e.date.day == date.day,
+          orElse: () => HabitEntry(
+            date: date,
+            drinkWater: false,
+            eatHealthy: false,
+            exercise: false,
+            journal: false,
+            month: '',
+            noPornAlcohol: false,
+            planTomorrow: false,
+            progressBar: '',
+            read: false,
+            sleep: false,
+            socialMedia: false,
+            study: false,
+            dailyPercentage: 0,
+            notes: '',
+          ),
+        );
+        if (_getHabitValueByIndex(entry, i)) {
+          completed++;
+        }
+      }
+      int percentage = ((completed / totalDaysInMonth) * 100).round();
+      monthlyHabitStats[habitNames[i]] = percentage;
+    }
+
+    // Get top 5 habits for pie chart
+    var sortedHabits = monthlyHabitStats.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    var topHabits = sortedHabits.take(5).toList();
+    
+    int total = topHabits.fold(0, (sum, entry) => sum + entry.value);
+    
+    List<Color> colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+    ];
+
+    return Container(
+      padding: responsive.padding(const EdgeInsets.all(16)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF2D2D2D)
+            : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF404040)
+              : const Color(0xFFE5E5E5),
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '📊 ${DateFormat('MMMM yyyy').format(now)}',
+            style: TextStyle(
+              fontSize: responsive.fontSize(14),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: responsive.spacing(12)),
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: CustomPaint(
+              size: const Size(150, 150),
+              painter: _PieChartPainter(topHabits, colors, total),
+            ),
+          ),
+          SizedBox(height: responsive.spacing(8)),
+          ...topHabits.asMap().entries.map((item) {
+            int index = item.key;
+            var entry = item.value;
+            double percentage = total > 0 ? (entry.value / total * 100) : 0;
+            
+            return Padding(
+              padding: EdgeInsets.only(bottom: responsive.spacing(2)),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: colors[index],
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: responsive.spacing(6)),
+                  Expanded(
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(fontSize: responsive.fontSize(10)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    '${percentage.toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontSize: responsive.fontSize(10),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
@@ -219,10 +382,17 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
     return Container(
       height: responsive.topBarHeight,
       padding: responsive.padding(EdgeInsets.symmetric(horizontal: responsive.isSmall ? 8 : 24)),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF1A1A1A)
+            : Colors.white,
         border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+          bottom: BorderSide(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF2D2D2D)
+                : const Color(0xFFE5E5E5),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -278,6 +448,19 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
             onPressed: _addNewDay,
             tooltip: 'Add New Day',
           ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+              size: responsive.largeIconSize,
+            ),
+            onPressed: () {
+              HabitTrackerApp.of(context)?.toggleTheme();
+            },
+            tooltip: 'Toggle Dark Mode',
+          ),
         ],
       ),
     );
@@ -285,6 +468,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
 
   Widget _buildViewButton(ResponsiveHelper responsive, String label, String view) {
     final bool isSelected = _selectedView == view;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return InkWell(
       onTap: () => setState(() => _selectedView = view),
@@ -296,7 +480,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
           ),
         ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFE8E6E3) : Colors.transparent,
+          color: isSelected 
+              ? (isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE8E6E3))
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
@@ -304,6 +490,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
           style: TextStyle(
             fontSize: responsive.fontSize(responsive.isSmall ? 12 : 14),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            color: isDark ? const Color(0xFF64B5F6) : null,
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -312,6 +499,13 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   }
 
   Widget _buildMainContent(ResponsiveHelper responsive) {
+    // Reset scroll position when switching views
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_horizontalScrollController.hasClients) {
+        _horizontalScrollController.jumpTo(0);
+      }
+    });
+    
     switch (_selectedView) {
       case 'This Week':
         return _buildThisWeekView(responsive);
@@ -385,7 +579,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
               ),
             ],
           ),
-          SizedBox(height: responsive.spacing(16)),
+          SizedBox(height: responsive.spacing(24)),
+          _buildHabitStatistics(responsive, weekEntries),
+          SizedBox(height: responsive.spacing(24)),
           _buildTableView(responsive, weekEntries),
         ],
       ),
@@ -495,14 +691,22 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
     return Card(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraints.maxWidth,
-              ),
-              child: DataTable(
-                headingRowColor: WidgetStateProperty.all(const Color(0xFFF7F6F3)),
+          return Scrollbar(
+            controller: _horizontalScrollController,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth,
+                ),
+                child: DataTable(
+                headingRowColor: WidgetStateProperty.all(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? const Color.fromARGB(255, 172, 244, 84)
+                      : const Color.fromARGB(0, 249, 249, 249),
+                ),
                 headingRowHeight: responsive.tableRowHeight,
                 columnSpacing: responsive.value<double>(
                   mobile: 8,
@@ -529,6 +733,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: responsive.fontSize(13),
+                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -539,6 +744,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: responsive.fontSize(13),
+                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -553,7 +759,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: responsive.fontSize(13),
-                      color: Colors.blue,
+                      color: Colors.black,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -568,9 +774,15 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                 DataCell(
                   Text(
                     responsive.isMobile 
-                      ? DateFormat('EEE, MMM d').format(entry.date)
-                      : DateFormat('EEEE, MMMM d, yyyy').format(entry.date),
-                    style: TextStyle(fontSize: responsive.fontSize(14)),
+                      ? '${DateFormat('E').format(entry.date).toUpperCase().padRight(0)}, ${DateFormat('MMMM').format(entry.date).padRight(9)} ${entry.date.day.toString().padLeft(2)}, ${entry.date.year}'
+                      : '${DateFormat('E').format(entry.date).toUpperCase().padRight(0)}, ${DateFormat('MMMM').format(entry.date).padRight(9)} ${entry.date.day.toString().padLeft(2)}, ${entry.date.year}',
+                    style: TextStyle(
+                      fontSize: responsive.fontSize(14),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF64B5F6)
+                          : null,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -582,6 +794,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
               ],
             );
           }).toList(),
+                ),
               ),
             ),
           );
@@ -592,6 +805,17 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
 
   Widget _buildProgressBar(ResponsiveHelper responsive, int percentage) {
     int filledBlocks = (percentage / 10).floor();
+    
+    // Determine color based on percentage
+    Color getBlockColor() {
+      if (percentage < 50) {
+        return Colors.red;
+      } else if (percentage < 80) {
+        return Colors.yellow;
+      } else {
+        return Colors.green;
+      }
+    }
     
     // Use very small sizes to fit in tight table cells
     final blockSize = responsive.value<double>(
@@ -622,7 +846,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                 height: blockSize,
                 margin: EdgeInsets.only(right: index < 9 ? blockSpacing : 0),
                 decoration: BoxDecoration(
-                  color: index < filledBlocks ? Colors.black : const Color(0xFFE5E5E5),
+                  color: index < filledBlocks 
+                      ? getBlockColor()
+                      : const Color(0xFFE5E5E5),
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
@@ -631,7 +857,12 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
           SizedBox(height: responsive.spacing(2)),
           Text(
             '$percentage%',
-            style: TextStyle(fontSize: responsive.fontSize(7)),
+            style: TextStyle(
+              fontSize: responsive.fontSize(7),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF64B5F6)
+                  : null,
+            ),
           ),
         ],
       );
@@ -651,7 +882,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
               height: blockSize,
               margin: EdgeInsets.only(right: index < 9 ? blockSpacing : 0),
               decoration: BoxDecoration(
-                color: index < filledBlocks ? Colors.black : const Color(0xFFE5E5E5),
+                color: index < filledBlocks 
+                    ? getBlockColor()
+                    : const Color(0xFFE5E5E5),
                 borderRadius: BorderRadius.circular(1.5),
               ),
             ),
@@ -660,7 +893,12 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
         SizedBox(height: responsive.spacing(2)),
         Text(
           '$percentage%',
-          style: TextStyle(fontSize: responsive.fontSize(8)),
+          style: TextStyle(
+            fontSize: responsive.fontSize(8),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF64B5F6)
+                : null,
+          ),
         ),
       ],
     );
@@ -1037,9 +1275,269 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
     );
   }
 
+  Widget _buildHabitStatistics(ResponsiveHelper responsive, List<HabitEntry> entries) {
+    // Calculate habit completion percentages
+    Map<String, int> habitStats = {};
+    for (int i = 0; i < habitNames.length && i < 10; i++) {
+      int completed = 0;
+      for (var entry in entries) {
+        if (_getHabitValueByIndex(entry, i)) {
+          completed++;
+        }
+      }
+      int percentage = entries.isEmpty ? 0 : ((completed / entries.length) * 100).round();
+      habitStats[habitNames[i]] = percentage;
+    }
+
+    return Card(
+      child: Padding(
+        padding: responsive.padding(const EdgeInsets.all(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '📊 Habit Statistics',
+              style: TextStyle(
+                fontSize: responsive.fontSize(18),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: responsive.spacing(16)),
+            responsive.isSmall
+                ? Column(
+                    children: [
+                      _buildBarChart(responsive, habitStats),
+                      SizedBox(height: responsive.spacing(16)),
+                      _buildPieChart(responsive, habitStats),
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: _buildBarChart(responsive, habitStats),
+                      ),
+                      SizedBox(width: responsive.spacing(16)),
+                      Expanded(
+                        child: _buildPieChart(responsive, habitStats),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _getHabitValueByIndex(HabitEntry entry, int index) {
+    final habitFields = ['sleep', 'eatHealthy', 'socialMedia', 'noPornAlcohol', 
+                        'drinkWater', 'study', 'exercise', 'read', 'journal', 'planTomorrow'];
+    if (index < habitFields.length) {
+      return _getHabitValue(entry, habitFields[index]);
+    }
+    return false;
+  }
+
+  Widget _buildBarChart(ResponsiveHelper responsive, Map<String, int> habitStats) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Completion Rate by Habit',
+          style: TextStyle(
+            fontSize: responsive.fontSize(14),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: responsive.spacing(12)),
+        ...habitStats.entries.map((entry) {
+          Color barColor;
+          if (entry.value < 50) {
+            barColor = Colors.red;
+          } else if (entry.value < 80) {
+            barColor = Colors.orange;
+          } else {
+            barColor = Colors.green;
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: responsive.spacing(8)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        entry.key,
+                        style: TextStyle(fontSize: responsive.fontSize(12)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: responsive.spacing(8)),
+                    Expanded(
+                      flex: 7,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: entry.value / 100,
+                            child: Container(
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: barColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: responsive.spacing(8)),
+                    SizedBox(
+                      width: 40,
+                      child: Text(
+                        '${entry.value}%',
+                        style: TextStyle(
+                          fontSize: responsive.fontSize(12),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildPieChart(ResponsiveHelper responsive, Map<String, int> habitStats) {
+    // Get top 5 habits
+    var sortedHabits = habitStats.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    var topHabits = sortedHabits.take(5).toList();
+    
+    int total = topHabits.fold(0, (sum, entry) => sum + entry.value);
+    
+    List<Color> colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Top 5 Habits',
+          style: TextStyle(
+            fontSize: responsive.fontSize(14),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: responsive.spacing(12)),
+        Center(
+          child: SizedBox(
+            width: responsive.value<double>(
+              mobile: 150,
+              tablet: 180,
+              desktop: 200,
+              largeDesktop: 220,
+            ),
+            height: responsive.value<double>(
+              mobile: 150,
+              tablet: 180,
+              desktop: 200,
+              largeDesktop: 220,
+            ),
+            child: CustomPaint(
+              size: Size(
+                responsive.value<double>(
+                  mobile: 150,
+                  tablet: 180,
+                  desktop: 200,
+                  largeDesktop: 220,
+                ),
+                responsive.value<double>(
+                  mobile: 150,
+                  tablet: 180,
+                  desktop: 200,
+                  largeDesktop: 220,
+                ),
+              ),
+              painter: _PieChartPainter(topHabits, colors, total),
+            ),
+          ),
+        ),
+        SizedBox(height: responsive.spacing(12)),
+        ...topHabits.asMap().entries.map((item) {
+          int index = item.key;
+          var entry = item.value;
+          double percentage = total > 0 ? (entry.value / total * 100) : 0;
+          
+          return Padding(
+            padding: EdgeInsets.only(bottom: responsive.spacing(4)),
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: colors[index],
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                SizedBox(width: responsive.spacing(8)),
+                Expanded(
+                  child: Text(
+                    entry.key,
+                    style: TextStyle(fontSize: responsive.fontSize(11)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  '${percentage.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    fontSize: responsive.fontSize(11),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
   Widget _buildMonthCard(ResponsiveHelper responsive, String monthName, MonthlyOverview data) {
     int percentage = data.monthlyAverage.round();
     int filledBlocks = (percentage / 10).floor();
+
+    // Determine color based on percentage
+    Color getBlockColor() {
+      if (percentage < 50) {
+        return Colors.red;
+      } else if (percentage < 80) {
+        return Colors.yellow;
+      } else {
+        return Colors.green;
+      }
+    }
 
     final blockSize = responsive.value<double>(
       mobile: 10,
@@ -1092,7 +1590,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                   width: blockSize,
                   height: blockSize,
                   decoration: BoxDecoration(
-                    color: index < filledBlocks ? Colors.black : const Color(0xFFE5E5E5),
+                    color: index < filledBlocks ? getBlockColor() : const Color(0xFFE5E5E5),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1320,4 +1818,60 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
       ),
     );
   }
+}
+
+class _PieChartPainter extends CustomPainter {
+  final List<MapEntry<String, int>> data;
+  final List<Color> colors;
+  final int total;
+
+  _PieChartPainter(this.data, this.colors, this.total);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (total == 0 || data.isEmpty) {
+      // Draw a placeholder circle
+      final paint = Paint()
+        ..color = Colors.grey.shade300
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(
+        Offset(size.width / 2, size.height / 2),
+        size.width / 2,
+        paint,
+      );
+      return;
+    }
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width < size.height ? size.width : size.height) / 2 * 0.9;
+    
+    double startAngle = -3.14159 / 2; // Start from top
+
+    for (int i = 0; i < data.length; i++) {
+      final sweepAngle = (data[i].value / total) * 2 * 3.14159;
+      
+      final paint = Paint()
+        ..color = colors[i]
+        ..style = PaintingStyle.fill;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        true,
+        paint,
+      );
+
+      startAngle += sweepAngle;
+    }
+
+    // Draw white circle in center to make it a donut chart
+    final centerPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius * 0.5, centerPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

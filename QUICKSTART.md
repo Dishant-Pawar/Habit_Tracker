@@ -132,4 +132,4 @@ Check the full README.md for detailed documentation and customization options.
 
 ---
 
-**Remember**: Dishant Pawar! 🌟
+**Remember**: DP THE SILENT KILLER! 🌟

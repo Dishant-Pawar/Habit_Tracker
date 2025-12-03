@@ -6,7 +6,7 @@ A beautiful and comprehensive Flutter dashboard for tracking your daily habits, 
 
 ### 📊 Dashboard Overview
 - **Quick Stats Cards**: Total days tracked, success rate, current streak, and best streak
-- **Motivational Quote**: "Dishant Pawar" reminder
+- **Motivational Quote**: "DP THE SILENT KILLER" reminder
 - **Monthly Progress Chart**: Visual bar chart showing monthly completion rates
 - **Habit Completion Overview**: Percentage completion for each of your 10 habits
 
@@ -186,9 +186,9 @@ This project is open source and available for personal use.
 
 ## Credits
 
-Created for tracking the "Dishant Pawar" habit system.
+Created for tracking the "DP THE SILENT KILLER" habit system.
 
 ---
 
-**Remember**: Dishant Pawar! 🌟
+**Remember**: DP THE SILENT KILLER! 🌟
 Keep building your habits, one day at a time! 💪
