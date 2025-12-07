@@ -64,7 +64,7 @@ Widget build(BuildContext context) {
 - **Header Text**: Responsive font sizes (11-14px)
 - **Checkbox Sizes**: 18px (mobile) → 22px (large desktop)
 
-### 6. Progress Bar Responsive Design
+### 6. Ravan008isback Responsive Design
 - **Block Sizes**: 5-6px (mobile) → 10-12px (desktop)
 - **Spacing**: Minimal on mobile, comfortable on desktop
 - **Text Size**: 8px (mobile) → 11-12px (desktop)

@@ -104,7 +104,7 @@ flutter run
 
 ### CSV not recognized
 Ensure your CSV has these exact columns:
-- Notes, Date, Drink 2L water, Eat healthy meals, Exercise 30 minutes, Journal & self-reflect, Month, No porn/alcohol, Plan tomorrow's tasks, Progress Bar, Read 30 minutes, Sleep 7-8 hours, Social media ≤ 90min, Study ≥ 2 hours, daily percentage
+- Notes, Date, Drink 2L water, Eat healthy meals, Exercise 30 minutes, Journal & self-reflect, Month, No porn/alcohol, Plan tomorrow's tasks, Ravan008isback, Read 30 minutes, Sleep 7-8 hours, Social media ≤ 90min, Study ≥ 2 hours, daily percentage
 
 ## Building for Production
 
@@ -132,4 +132,4 @@ Check the full README.md for detailed documentation and customization options.
 
 ---
 
-**Remember**: DP THE SILENT KILLER! 🌟
+**Remember**: Dishant! 🌟

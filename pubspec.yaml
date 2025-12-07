@@ -16,6 +16,7 @@ dependencies:
   file_picker: ^10.3.7
   shared_preferences: ^2.2.2
   shared_preferences_web: ^2.2.2
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

@@ -6,7 +6,7 @@ A beautiful and comprehensive Flutter dashboard for tracking your daily habits, 
 
 ### 📊 Dashboard Overview
 - **Quick Stats Cards**: Total days tracked, success rate, current streak, and best streak
-- **Motivational Quote**: "DP THE SILENT KILLER" reminder
+- **Motivational Quote**: "Dishant" reminder
 - **Monthly Progress Chart**: Visual bar chart showing monthly completion rates
 - **Habit Completion Overview**: Percentage completion for each of your 10 habits
 
@@ -88,7 +88,7 @@ The app expects a CSV file with the following columns:
 - Month
 - No porn/alcohol
 - Plan tomorrow's tasks
-- Progress Bar
+- Ravan008isback
 - Read 30 minutes
 - Sleep 7-8 hours
 - Social media ≤ 90min
@@ -186,9 +186,9 @@ This project is open source and available for personal use.
 
 ## Credits
 
-Created for tracking the "DP THE SILENT KILLER" habit system.
+Created for tracking the "Dishant" habit system.
 
 ---
 
-**Remember**: DP THE SILENT KILLER! 🌟
+**Remember**: Dishant! 🌟
 Keep building your habits, one day at a time! 💪

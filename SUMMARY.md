@@ -162,7 +162,7 @@ flutter build web --release
 
 ### Motivational Quote
 Every time you open the dashboard, you'll see:
-> "🌟 DP THE SILENT KILLER"
+> "🌟 Dishant"
 > Keep building your habits, one day at a time!
 
 ### Streak Tracking
@@ -218,7 +218,7 @@ Your habit tracker dashboard is ready to use. The app will help you:
 ✅ Stay motivated
 ✅ Build better habits
 
-**Remember**: DP THE SILENT KILLER! 🌟
+**Remember**: Dishant! 🌟
 
 Start the app now with:
 ```powershell

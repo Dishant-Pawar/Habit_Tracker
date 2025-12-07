@@ -153,19 +153,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // Motivational Quote
           Column(
             children: [
-              Text(
-                '🌟 DP THE SILENT KILLER',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: const Color(0xFF00FF41),
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          color: const Color(0xFF00FF41).withOpacity(0.8),
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-              ),
+Text(
+  '🌟 Rise stronger every day\n',
+  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+    color: const Color(0xFF00FF41),
+    fontWeight: FontWeight.bold,
+    shadows: [
+      Shadow(
+        color: const Color(0xFF00FF41).withOpacity(0.8),
+        blurRadius: 10,
+      ),
+    ],
+  ),
+),
               const SizedBox(height: 8),
               Text(
                 'Keep building your habits, one day at a time!',

@@ -18,6 +18,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   List<HabitEntry> _entries = [];
   bool _isLoading = false;
   String _selectedView = 'This Week';
+  String _previousView = 'This Week';
   DateTime _selectedMonth = DateTime.now();
   bool _isSidebarOpen = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -27,7 +28,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
     'Sleep 7-8 hours 💤',
     'Eat healthy meals 🥗',
     'Social media ≤ 90min 📱',
-    'No porn/alcohol 🚫',
+    'NO Smoke 🚫',
     'Drink 2L water 💧',
     'Study ≥ 2 hours 💻',
     'Exercise 30 minutes 🏋🏻‍♀️',
@@ -93,11 +94,9 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
           body: SafeArea(
             child: Row(
               children: [
-                // Left Sidebar with animation (only on desktop/tablet)
+                // Left Sidebar (only on desktop/tablet)
                 if (!responsive.isSmall)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                  SizedBox(
                     width: _isSidebarOpen ? responsive.sidebarWidth : 0,
                     child: _isSidebarOpen ? _buildSidebar(responsive) : const SizedBox(),
                   ),
@@ -141,7 +140,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
           ),
           SizedBox(height: responsive.spacing(32)),
           Text(
-            'DP THE SILENT KILLER',
+            'Rise stronger every day',
             style: TextStyle(
               fontSize: responsive.fontSize(14),
               fontWeight: FontWeight.bold,
@@ -185,57 +184,43 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
             child: ListView.builder(
               itemCount: habitNames.length,
               itemBuilder: (context, index) {
-                return TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  duration: Duration(milliseconds: 300 + (index * 50)),
-                  curve: Curves.easeOutCubic,
-                  builder: (context, value, child) {
-                    return Transform.translate(
-                      offset: Offset(-50 * (1 - value), 0),
-                      child: Opacity(
-                        opacity: value,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: responsive.spacing(24),
-                      bottom: responsive.spacing(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '• ${habitNames[index]}',
-                            style: TextStyle(
-                              fontSize: responsive.fontSize(14),
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFF64B5F6)
-                                  : null,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: responsive.spacing(24),
+                    bottom: responsive.spacing(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '• ${habitNames[index]}',
+                          style: TextStyle(
+                            fontSize: responsive.fontSize(14),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF64B5F6)
+                                : null,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                         ),
-                        SizedBox(width: responsive.spacing(4)),
-                        IconButton(
-                          icon: Icon(Icons.edit, size: responsive.smallIconSize),
-                          onPressed: () => _editHabit(index),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          tooltip: 'Edit',
-                        ),
-                        SizedBox(width: responsive.spacing(4)),
-                        IconButton(
-                          icon: Icon(Icons.delete, size: responsive.smallIconSize),
-                          onPressed: () => _deleteHabit(index),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          tooltip: 'Delete',
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(width: responsive.spacing(4)),
+                      IconButton(
+                        icon: Icon(Icons.edit, size: responsive.smallIconSize),
+                        onPressed: () => _editHabit(index),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Edit',
+                      ),
+                      SizedBox(width: responsive.spacing(4)),
+                      IconButton(
+                        icon: Icon(Icons.delete, size: responsive.smallIconSize),
+                        onPressed: () => _deleteHabit(index),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Delete',
+                      ),
+                    ],
                   ),
                 );
               },
@@ -372,7 +357,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -471,7 +456,20 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return InkWell(
-      onTap: () => setState(() => _selectedView = view),
+      onTap: () {
+        if (_selectedView != view) {
+          setState(() {
+            _previousView = _selectedView;
+            _selectedView = view;
+          });
+          // Reset scroll position when view changes
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_horizontalScrollController.hasClients) {
+              _horizontalScrollController.jumpTo(0);
+            }
+          });
+        }
+      },
       child: Container(
         padding: responsive.padding(
           EdgeInsets.symmetric(
@@ -499,13 +497,6 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
   }
 
   Widget _buildMainContent(ResponsiveHelper responsive) {
-    // Reset scroll position when switching views
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_horizontalScrollController.hasClients) {
-        _horizontalScrollController.jumpTo(0);
-      }
-    });
-    
     switch (_selectedView) {
       case 'This Week':
         return _buildThisWeekView(responsive);
@@ -740,7 +731,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
             ),
             DataColumn(
               label: Text(
-                'Progress\nBar',
+                'Progress',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: responsive.fontSize(13),
@@ -1418,7 +1409,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -1519,7 +1510,7 @@ class _NotionDashboardScreenState extends State<NotionDashboardScreen> {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
